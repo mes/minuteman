@@ -1,4 +1,5 @@
 require 'helper'
+require 'date'
 
 @patterns = Minuteman.patterns
 
@@ -52,6 +53,15 @@ test "track an user" do
 
   analyzer = Minuteman.analyze("login:successful")
   assert analyzer.day(Time.now.utc).count == 1
+end
+
+test "analyze should not create keys" do
+  user = Minuteman::User.create
+
+  assert Minuteman.track("login:successful", user)
+  dbsize = Minuteman.config.redis.call("dbsize")
+  a = Minuteman.analyze("login:successful").minute(Date.new(2001, 2, 3))
+  assert Minuteman.config.redis.call("dbsize") == dbsize
 end
 
 test "tracks an anonymous user and the promotes it to a real one" do

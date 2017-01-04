@@ -4,6 +4,7 @@ module Minuteman
   class Model < ::Ohm::Model
     attribute :type
     attribute :time
+    attribute :lazy
 
     def self.find(*args)
       looked_up = "#{self.name}::#{args.first[:type]}:#{args.first[:time]}:id"
@@ -23,11 +24,14 @@ module Minuteman
     end
 
     def self.create(*args)
-      event = super(*args)
-      Minuteman.config.redis.call("SADD", "#{Minuteman.prefix}::Events", event.type)
-      Minuteman.config.redis.call("SET", "#{event.key}:id", event.id)
-
-      event
+      if !args[0][:lazy]
+        event = super(*args)
+        Minuteman.config.redis.call("SADD", "#{Minuteman.prefix}::Events", event.type)
+        Minuteman.config.redis.call("SET", "#{event.key}:id", event.id)
+        return event
+      else
+        return self.new(*args)
+      end
     end
 
     def key

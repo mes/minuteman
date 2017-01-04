@@ -8,6 +8,7 @@ module Minuteman
           key = Minuteman.patterns[method].call(time)
           search = { type: action, time: key }
           search[:user_id] = user.id if !user.nil?
+          search[:lazy] = true
 
           klass.find_or_create(search)
         end
