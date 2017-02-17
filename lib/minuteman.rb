@@ -29,12 +29,12 @@ module Minuteman
       config.redis.call("SMEMBERS", "#{Minuteman.prefix}::Events")
     end
 
-    def track(action, users = nil, time = Time.now.utc)
+    def track(action, users = nil, time = Time.now.utc, times = time_spans)
       users = Minuteman::User.create if users.nil?
 
       Array(users).each do |user|
         process do
-          time_spans.each do |time_span|
+          times.each do |time_span|
             event = Minuteman::Event.find_or_create(
               type: action,
               time: patterns[time_span].call(time)
@@ -48,8 +48,8 @@ module Minuteman
       users
     end
 
-    def add(action, time = Time.now.utc, users = [])
-      time_spans.each do |time_span|
+    def add(action, time = Time.now.utc, users = [], times = time_spans)
+      times.each do |time_span|
         process do
           counter = Minuteman::Counter.create({
             type: action,
@@ -61,7 +61,7 @@ module Minuteman
       end
 
       Array(users).each do |user|
-        time_spans.each do |time_span|
+        times.each do |time_span|
           counter = Minuteman::Counter::User.create({
             user_id: user.id,
             type: action,
