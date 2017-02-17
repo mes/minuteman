@@ -18,12 +18,12 @@ module Minuteman
       super
     end
 
-    def track(action, time = Time.now.utc)
-      Minuteman.track(action, self, time)
+    def track(action, time = Time.now.utc, times = Minuteman.time_spans)
+      Minuteman.track(action, self, time, times)
     end
 
-    def add(action, time = Time.now.utc)
-      Minuteman.add(action, time, self)
+    def add(action, time = Time.now.utc, times = Minuteman.time_spans)
+      Minuteman.add(action, time, self, times)
     end
 
     def count(action, time = Time.now.utc)
