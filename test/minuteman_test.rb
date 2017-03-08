@@ -30,15 +30,7 @@ test "an anonymous user" do
 
   assert user.is_a?(Minuteman::User)
   assert !!user.uid
-  assert !user.identifier
   assert user.id
-end
-
-test "access a user with and id or an uuid" do
-  user = Minuteman::User.create(identifier: 5)
-
-  assert Minuteman::User[user.uid].is_a?(Minuteman::User)
-  assert Minuteman::User[user.identifier].is_a?(Minuteman::User)
 end
 
 test "track an anonymous user" do
@@ -62,17 +54,6 @@ test "analyze should not create keys" do
   dbsize = Minuteman.config.redis.call("dbsize")
   a = Minuteman.analyze("login:successful").minute(Date.new(2001, 2, 3))
   assert Minuteman.config.redis.call("dbsize") == dbsize
-end
-
-test "tracks an anonymous user and the promotes it to a real one" do
-  user = Minuteman.track("enter:website")
-  assert user.identifier == nil
-
-  user.promote(42)
-
-  assert user.identifier == 42
-  assert Minuteman::User[42].uid == user.uid
-  assert Minuteman("enter:website").day.include?(user)
 end
 
 test "create your own storage patterns and access analyzer" do
@@ -224,14 +205,4 @@ test "get all the created events" do
 
   assert Minuteman.events.count == 10
   assert Minuteman.events.include?("test:5")
-end
-
-test "users are anonymous if they don't have an identifier" do
-  user = Minuteman.track("some_event")
-
-  assert user.anonymous? == true
-
-  user.promote 123
-
-  assert user.anonymous? == false
 end

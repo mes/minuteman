@@ -4,17 +4,11 @@ require 'securerandom'
 module Minuteman
   class User < ::Ohm::Model
     attribute :uid
-    attribute :identifier
-    attribute :anonymous
 
     unique :uid
-    unique :identifier
-
-    index :anonymous
 
     def save
       self.uid ||= SecureRandom.uuid
-      self.anonymous ||= !identifier
       super
     end
 
@@ -31,17 +25,11 @@ module Minuteman
     end
 
     def anonymous?
-      self.anonymous == true
-    end
-
-    def promote(identifier)
-      self.identifier = identifier
-      self.anonymous = false
-      save
+      true
     end
 
     def self.[](identifier_or_uuid)
-      with(:uid, identifier_or_uuid) || with(:identifier, identifier_or_uuid)
+      with(:uid, identifier_or_uuid)
     end
   end
 end
