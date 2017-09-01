@@ -1,5 +1,5 @@
 require 'redic'
-
+require 'byebug'
 module Minuteman
   LUA_CACHE      = Hash.new { |h, k| h[k] = Hash.new }
   LUA_OPERATIONS = File.expand_path("../minuteman/lua/operations.lua",   __FILE__)
@@ -61,13 +61,13 @@ module Minuteman
       end
 
       Array(users).each do |user|
+
         times.each do |time_span|
           counter = Minuteman::Counter::User.create({
             user_id: user.id,
             type: action,
             time: patterns[time_span].call(time)
           })
-
           counter.incr
         end
       end

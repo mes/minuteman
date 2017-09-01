@@ -1,13 +1,24 @@
 require 'minuteman/model'
 
 module Minuteman
-  class Counter < Minuteman::Model
+  class Counter < ::Ohm::Model
+    attribute :type
+    attribute :time
+    attribute :lazy
     class User < Counter
       attribute :user_id
+    end
 
-      def key
-        "#{super}:#{user_id}"
-      end
+    def key
+      "#{self.class.name}::#{type}:#{time}"
+    end
+
+    def self.find_or_create(*args)
+      create(*args)
+    end
+
+    def self.create(*args)
+      return self.new(*args)
     end
 
     def incr

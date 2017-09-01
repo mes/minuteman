@@ -47,9 +47,9 @@ module Minuteman
       base_key = Minuteman.config.operations_prefix
 
       destination_key = if action == "NOT"
-                          "#{base_key}#{events[0].id}:#{action}"
+                          "#{base_key}#{events[0].key}:#{action}"
                         else
-                          src, dst = events[0].id, events[1].id
+                          src, dst = events[0].key, events[1].key
                           "#{base_key}#{src}:#{action}:#{dst}"
                         end
 

@@ -52,7 +52,7 @@ test "analyze should not create keys" do
 
   assert Minuteman.track("login:successful", user)
   dbsize = Minuteman.config.redis.call("dbsize")
-  a = Minuteman.analyze("login:successful").minute(Date.new(2001, 2, 3))
+  Minuteman.analyze("login:successful").minute(Date.new(2001, 2, 3))
   assert Minuteman.config.redis.call("dbsize") == dbsize
 end
 
@@ -192,17 +192,4 @@ scope "do actions through a user" do
     assert Counterman("login:attempts").day.count == 5
     assert user.count("login:attempts").day.count == 3
   end
-end
-
-test "get all the created events" do
-  Minuteman.config.redis.call("FLUSHDB")
-
-  assert Minuteman.events.count == 0
-
-  10.times { |i|
-    Minuteman.track("test:#{i}")
-  }
-
-  assert Minuteman.events.count == 10
-  assert Minuteman.events.include?("test:5")
 end
