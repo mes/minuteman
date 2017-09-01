@@ -7,6 +7,10 @@ module Minuteman
     attribute :lazy
     class User < Counter
       attribute :user_id
+
+      def key
+        "#{super}:#{user_id}"
+      end
     end
 
     def key
