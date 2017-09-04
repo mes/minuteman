@@ -1,5 +1,5 @@
 require 'redic'
-require 'byebug'
+
 module Minuteman
   LUA_CACHE      = Hash.new { |h, k| h[k] = Hash.new }
   LUA_OPERATIONS = File.expand_path("../minuteman/lua/operations.lua",   __FILE__)
