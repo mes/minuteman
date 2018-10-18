@@ -29,8 +29,12 @@ module Minuteman
       config.redis.call("SMEMBERS", "#{Minuteman.prefix}::Events")
     end
 
-    def track(action, users = nil, time = Time.now.utc, times = time_spans)
-      users = Minuteman::User.create if users.nil?
+    def next_id_for(scope)
+      config.redis.call("incr", "#{Minuteman.prefix}::id::#{scope}")
+    end
+
+    def track(action, users = nil, time = Time.now.utc, times = time_spans, scope = 'global')
+      users = Minuteman::User.create(scope) if users.nil?
 
       Array(users).each do |user|
         process do

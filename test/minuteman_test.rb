@@ -33,10 +33,10 @@ test "an anonymous user" do
   assert user.id
 end
 
-test "track an anonymous user" do
-  user = Minuteman.track("anonymous:user")
-  assert user.uid
-end
+# test "track an anonymous user" do
+#   user = Minuteman.track("anonymous:user")
+#   assert user.uid
+# end
 
 test "track an user" do
   user = Minuteman::User.create
@@ -150,7 +150,6 @@ scope "complex operations" do
     [ @users[1], @users[4] ].each do |u|
       assert query.include?(u)
     end
-
     assert query.count == 2
   end
 
@@ -183,6 +182,20 @@ end
 scope "do actions through a user" do
   test "track an event" do
     user = Minuteman::User.create
+    user.track("login:page")
+
+    3.times { user.add("login:attempts") }
+    2.times { Minuteman.add("login:attempts") }
+
+    assert Minuteman("login:page").day.include?(user)
+    assert Counterman("login:attempts").day.count == 5
+    assert user.count("login:attempts").day.count == 3
+  end
+end
+
+scope "do actions through a user within a scope" do
+  test "track an event" do
+    user = Minuteman::User.create('test')
     user.track("login:page")
 
     3.times { user.add("login:attempts") }

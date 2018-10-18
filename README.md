@@ -127,9 +127,7 @@ Counterman("hits:page").day.count # => 201
 
 ## Users
 
-Minuteman 2.0 adds the concept of users which can be annonymous or have a
-relation with your own database.
-
+Users can have scopes complex operations like & are only valid within the same scope
 ```ruby
 # This will create an annonymous user
 user = Minuteman::User.create
