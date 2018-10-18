@@ -5,8 +5,8 @@ require 'minuteman/scoped_model'
 module Minuteman
   class User < ScopedModel
 
-    def track(action, time = Time.now.utc, times = Minuteman.time_spans)
-      Minuteman.track(action, self, time, times)
+    def track(action, time = Time.now.utc, times = Minuteman.time_spans, scope = 'global')
+      Minuteman.track(action, self, time, times, scope)
     end
 
     def add(action, time = Time.now.utc, times = Minuteman.time_spans)
