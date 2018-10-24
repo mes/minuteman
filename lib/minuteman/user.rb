@@ -1,4 +1,3 @@
-require 'ohm'
 require 'securerandom'
 require 'minuteman/scoped_model'
 
