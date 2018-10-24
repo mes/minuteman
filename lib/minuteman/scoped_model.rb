@@ -1,5 +1,3 @@
-require 'securerandom'
-
 module Minuteman
   class ScopedModel
     attr_accessor :id
