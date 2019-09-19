@@ -169,6 +169,11 @@ test "count a given event" do
   assert Counterman("enter:new_landing").day.count == 10
 end
 
+test "it count the given amount" do
+  Minuteman.add("enter:new_landing", Time.now.utc, nil, Minuteman.config.patterns.keys, 20)
+  assert Counterman("enter:new_landing").day.count == 20
+end
+
 test "count events on some dates" do
   day = Time.new(2015, 10, 15)
   next_day = Time.new(2015, 10, 16)
