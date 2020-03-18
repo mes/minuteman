@@ -23,6 +23,4 @@ module Minuteman
       self.id
     end
   end
-
-
 end
