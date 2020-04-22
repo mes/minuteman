@@ -1,6 +1,5 @@
 require 'helper'
 require 'date'
-require 'byebug'
 
 @patterns = Minuteman.patterns
 
