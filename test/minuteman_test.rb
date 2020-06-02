@@ -22,7 +22,7 @@ test "a connection" do
 end
 
 test "models in minuteman namespace" do
-  assert_equal Minuteman::User.create.key, "Minuteman::User:1"
+  assert_equal Minuteman::User.create.key.to_s, "Minuteman::User:1"
 end
 
 test "an anonymous user" do
