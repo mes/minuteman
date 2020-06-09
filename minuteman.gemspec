@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name              = "minuteman"
-  s.version           = "2.0.1"
+  s.version           = "2.0.2"
   s.summary           = "Bit Analytics"
   s.description       = "Fast and furious tracking system using Redis bitwise operations"
   s.authors           = ["elcuervo"]
@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency("redic", "~> 1.5.0")
   s.add_dependency("ohm",   "~> 3.1.1")
+  s.add_dependency("msgpack")
 
   s.add_development_dependency("cutest", "~> 1.2.2")
 end
