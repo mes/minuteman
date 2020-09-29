@@ -1,11 +1,10 @@
-require 'securerandom'
 require 'minuteman/scoped_model'
 
 module Minuteman
   class User < ScopedModel
 
-    def track(action, time = Time.now.utc, times = Minuteman.time_spans, scope = 'global')
-      Minuteman.track(action, self, time, times, scope)
+    def track(action, time = Time.now.utc, times = Minuteman.time_spans, scope:)
+      Minuteman.track(action, self, time, times, scope: scope)
     end
 
     def add(action, time = Time.now.utc, times = Minuteman.time_spans)

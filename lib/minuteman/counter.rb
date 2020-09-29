@@ -1,20 +1,28 @@
-require 'minuteman/model'
-
 module Minuteman
-  class Counter < ::Ohm::Model
-    attribute :type
-    attribute :time
-    attribute :lazy
+  class Counter
+    attr_accessor :type
+    attr_accessor :time
+    attr_accessor :lazy
+
     class User < Counter
-      attribute :user_id
+      attr_accessor :user_id
+      def initialize(type:, time: nil, lazy: false, user_id:)
+        super(type: type, time: time, lazy: lazy)
+        @user_id = user_id
+      end
 
       def key
-        "#{super}:#{user_id}"
+        "#{super}:#{@user_id}"
       end
+    end
+    def initialize(type:, time: nil, lazy: false)
+      @type = type
+      @time = time
+      @lazy = lazy
     end
 
     def key
-      "#{self.class.name}::#{type}:#{time}"
+      "#{self.class.name}::#{@type}:#{@time}"
     end
 
     def self.find_or_create(*args)

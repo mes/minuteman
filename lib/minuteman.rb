@@ -33,7 +33,7 @@ module Minuteman
       config.redis.call("incr", "#{Minuteman.prefix}::id::#{scope}")
     end
 
-    def track(action, users = nil, time = Time.now.utc, times = time_spans, scope = 'global')
+    def track(action, users = nil, time = Time.now.utc, times = time_spans, scope:)
       users = Minuteman::User.create(scope) if users.nil?
 
       Array(users).each do |user|

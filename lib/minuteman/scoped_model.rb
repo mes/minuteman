@@ -1,21 +1,21 @@
 module Minuteman
   class ScopedModel
     attr_accessor :id
-    def initialize(id)
-      @id = id
+    def initialize(scope)
+      @id = Minuteman.next_id_for(scope)
+      @scope = scope
     end
 
     def key
-      "Minuteman::User:#{@id}"
+      "U:#{@scope}:#{@id}"
     end
 
     def self.[](id)
       new(id)
     end
 
-    def self.create(scope = 'global')
-      id = Minuteman.next_id_for(scope)
-      new(id)
+    def self.create(scope)
+      new(scope)
     end
   end
 end
