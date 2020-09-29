@@ -25,8 +25,8 @@ module Minuteman
       return self.new(*args)
     end
 
-    def incr
-      Minuteman.config.redis.call("INCR", key)
+    def incr(amount = 1)
+      Minuteman.config.redis.call("INCRBY", key, amount)
     end
 
     def count

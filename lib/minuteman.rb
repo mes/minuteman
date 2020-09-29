@@ -52,7 +52,7 @@ module Minuteman
       users
     end
 
-    def add(action, time = Time.now.utc, users = [], times = time_spans)
+    def add(action, time = Time.now.utc, users = [], times = time_spans, amount = 1)
       times.each do |time_span|
         process do
           counter = Minuteman::Counter.create({
@@ -60,7 +60,7 @@ module Minuteman
             time: patterns[time_span].call(time)
           })
 
-          counter.incr
+          counter.incr(amount)
         end
       end
 

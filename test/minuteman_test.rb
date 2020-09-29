@@ -22,7 +22,7 @@ test "a connection" do
 end
 
 test "models in minuteman namespace" do
-  assert_equal Minuteman::User.create.key, "Minuteman::User:1"
+  assert_equal Minuteman::User.create.key.to_s, "Minuteman::User:1"
 end
 
 test "an anonymous user" do
@@ -166,6 +166,11 @@ test "count a given event" do
   10.times { Minuteman.add("enter:new_landing") }
 
   assert Counterman("enter:new_landing").day.count == 10
+end
+
+test "it count the given amount" do
+  Minuteman.add("enter:new_landing", Time.now.utc, nil, Minuteman.config.patterns.keys, 20)
+  assert Counterman("enter:new_landing").day.count == 20
 end
 
 test "count events on some dates" do
