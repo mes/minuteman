@@ -7,7 +7,7 @@ module Minuteman
     end
 
     def key
-      "U:#{@scope}:#{@id}"
+      "Minuteman::User:#{@id}"
     end
 
     def self.[](id)
