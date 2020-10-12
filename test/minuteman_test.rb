@@ -22,22 +22,12 @@ test "a connection" do
   assert_equal Minuteman.config.redis.class, Redic
 end
 
-# test "models in minuteman namespace" do
-#   assert_equal Minuteman::User.create('test').key.to_s, "Minuteman::User:1"
-# end
-
 test "an anonymous user" do
   user = Minuteman::User.create('test')
 
   assert user.is_a?(Minuteman::User)
-  # assert !!user.uid
   assert user.id
 end
-
-# test "track an anonymous user" do
-#   user = Minuteman.track("anonymous:user")
-#   assert user.uid
-# end
 
 test "track an user" do
   user = Minuteman::User.create('test')
@@ -212,18 +202,3 @@ scope "do actions through a user within a scope" do
     assert user.count("login:attempts").day.count == 3
   end
 end
-
-# scope "do action throught a user with different scopes" do
-#   test "track an event" do
-#     user1 = Minuteman::User.create('test')
-#     user2 = Minuteman::User.create('test2')
-#     user.track("login:page", scope: 'test')
-#     user2.track("login:page", scope: 'test2')
-#     3.times { user1.add("login:attempts") }
-#     2.times { Minuteman.add("login:attempts") }
-
-#     assert Minuteman("login:page").day.include?(user)
-#     assert Counterman("login:attempts").day.count == 5
-#     assert user.count("login:attempts").day.count == 3
-#   end
-# end
