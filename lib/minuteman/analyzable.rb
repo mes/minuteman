@@ -1,5 +1,7 @@
 module Minuteman
   module Analyzable
+    require 'json'
+
     module ErrorPatterns
       DUPLICATE = /(UniqueIndexViolation: (\w+))/.freeze
       NOSCRIPT = /^NOSCRIPT/.freeze

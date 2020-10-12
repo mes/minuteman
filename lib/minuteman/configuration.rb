@@ -3,7 +3,7 @@ module Minuteman
     attr_accessor :redis, :patterns, :prefix, :parallel, :operations_prefix
 
     def initialize
-      @redis = Ohm.redis
+      @redis = redis
       @prefix = "Minuteman".freeze
       @operations_prefix = "#{@prefix}::Operations:"
       @parallel = false
@@ -19,7 +19,6 @@ module Minuteman
 
     def redis=(redis)
       @redis = redis
-      Ohm.redis = redis
     end
   end
 end

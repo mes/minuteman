@@ -1,11 +1,10 @@
-require 'ohm'
-require 'securerandom'
+require 'minuteman/scoped_model'
 
 module Minuteman
-  class User < ::Ohm::Model
+  class User < ScopedModel
 
-    def track(action, time = Time.now.utc, times = Minuteman.time_spans)
-      Minuteman.track(action, self, time, times)
+    def track(action, time = Time.now.utc, times = Minuteman.time_spans, scope:)
+      Minuteman.track(action, self, time, times, scope: scope)
     end
 
     def add(action, time = Time.now.utc, times = Minuteman.time_spans)
@@ -18,9 +17,6 @@ module Minuteman
 
     def anonymous?
       true
-    end
-    def uid
-      self.id
     end
   end
 end

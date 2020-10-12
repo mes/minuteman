@@ -1,5 +1,6 @@
 require 'helper'
 require 'date'
+require 'byebug'
 
 @patterns = Minuteman.patterns
 
@@ -21,36 +22,26 @@ test "a connection" do
   assert_equal Minuteman.config.redis.class, Redic
 end
 
-test "models in minuteman namespace" do
-  assert_equal Minuteman::User.create.key.to_s, "Minuteman::User:1"
-end
-
 test "an anonymous user" do
-  user = Minuteman::User.create
+  user = Minuteman::User.create('test')
 
   assert user.is_a?(Minuteman::User)
-  # assert !!user.uid
   assert user.id
 end
 
-test "track an anonymous user" do
-  user = Minuteman.track("anonymous:user")
-  assert user.uid
-end
-
 test "track an user" do
-  user = Minuteman::User.create
+  user = Minuteman::User.create('test')
 
-  assert Minuteman.track("login:successful", user)
+  assert Minuteman.track("login:successful", user, scope: 'test')
 
   analyzer = Minuteman.analyze("login:successful")
   assert analyzer.day(Time.now.utc).count == 1
 end
 
 test "analyze should not create keys" do
-  user = Minuteman::User.create
+  user = Minuteman::User.create('test')
 
-  assert Minuteman.track("login:successful", user)
+  assert Minuteman.track("login:successful", user, scope: 'test')
   dbsize = Minuteman.config.redis.call("dbsize")
   Minuteman.analyze("login:successful").minute(Date.new(2001, 2, 3))
   assert Minuteman.config.redis.call("dbsize") == dbsize
@@ -63,12 +54,12 @@ test "create your own storage patterns and access analyzer" do
     }
   end
 
-  Minuteman.track("logeo:exitoso")
+  Minuteman.track("logeo:exitoso", scope: 'test')
   assert Minuteman("logeo:exitoso").dia.count == 1
 end
 
 test "use the method shortcut" do
-  5.times { Minuteman.track("enter:website") }
+  5.times { Minuteman.track("enter:website", scope: 'test') }
 
   assert Minuteman("enter:website").day.count == 5
 end
@@ -77,13 +68,13 @@ scope "operations" do
   setup do
     Minuteman.config.redis.call("FLUSHDB")
 
-    @users = Array.new(3) { Minuteman::User.create }
+    @users = Array.new(3) { Minuteman::User.create('test') }
     @users.each do |user|
-      Minuteman.track("landing_page:new", @users)
+      Minuteman.track("landing_page:new", @users, scope: 'test')
     end
 
-    Minuteman.track("buy:product", @users[0])
-    Minuteman.track("buy:product", @users[2])
+    Minuteman.track("buy:product", @users[0], scope: 'test')
+    Minuteman.track("buy:product", @users[2], scope: 'test')
   end
 
   test "AND" do
@@ -122,18 +113,18 @@ end
 scope "complex operations" do
   setup do
     Minuteman.config.redis.call("FLUSHDB")
-    @users = Array.new(6) { Minuteman::User.create }
+    @users = Array.new(6) { Minuteman::User.create('test') }
 
     [ @users[0], @users[1], @users[2] ].each do |u|
-      Minuteman.track("promo:email", u)
+      Minuteman.track("promo:email", u, scope: 'test')
     end
 
     [ @users[3], @users[4], @users[5] ].each do |u|
-      Minuteman.track("promo:facebook", u)
+      Minuteman.track("promo:facebook", u, scope: 'test')
     end
 
     [ @users[1], @users[4], @users[6] ].each do |u|
-      Minuteman.track("user:new", u)
+      Minuteman.track("user:new", u, scope: 'test')
     end
   end
 
@@ -150,7 +141,6 @@ scope "complex operations" do
     [ @users[1], @users[4] ].each do |u|
       assert query.include?(u)
     end
-
     assert query.count == 2
   end
 
@@ -187,8 +177,22 @@ end
 
 scope "do actions through a user" do
   test "track an event" do
-    user = Minuteman::User.create
-    user.track("login:page")
+    user = Minuteman::User.create('test')
+    user.track("login:page", scope: 'test')
+
+    3.times { user.add("login:attempts") }
+    2.times { Minuteman.add("login:attempts") }
+
+    assert Minuteman("login:page").day.include?(user)
+    assert Counterman("login:attempts").day.count == 5
+    assert user.count("login:attempts").day.count == 3
+  end
+end
+
+scope "do actions through a user within a scope" do
+  test "track an event" do
+    user = Minuteman::User.create('test')
+    user.track("login:page", scope: 'test')
 
     3.times { user.add("login:attempts") }
     2.times { Minuteman.add("login:attempts") }
